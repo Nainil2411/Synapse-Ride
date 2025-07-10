@@ -1,0 +1,272 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:synapseride/Routes/routes.dart';
+import 'package:synapseride/common/app_string.dart';
+import 'package:synapseride/common/app_textstyle.dart';
+import 'package:synapseride/common/custom_color.dart';
+import 'package:synapseride/common/elevated_button.dart';
+import 'package:synapseride/controller/custom_drawer_controller.dart';
+import 'package:synapseride/controller/profile_controller.dart';
+import 'package:synapseride/controller/theme_controller.dart';
+
+class CustomDrawer extends StatelessWidget {
+  CustomDrawer({super.key});
+
+  final CustomDrawerController controller = Get.put(CustomDrawerController());
+  final ProfileController profileController = Get.find<ProfileController>();
+  final ThemeController themeController =
+      Get.find<ThemeController>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: Container(
+        color:
+            Theme.of(context).scaffoldBackgroundColor,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            Stack(
+              children: [
+                FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                  future: controller.getUserData(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return UserAccountsDrawerHeader(
+                        accountName: Text(
+                          'Loading...',
+                          style: AppTextStyles.bodyMedium
+                              .copyWith(color: Colors.white),
+                        ),
+                        accountEmail: Text(
+                          '',
+                          style: AppTextStyles.bodySmall
+                              .copyWith(color: Colors.white),
+                        ),
+                        currentAccountPicture: Obx(() {
+                          final imagePath = profileController.getProfileImage();
+                          return CircleAvatar(
+                            backgroundColor: CustomColors.yellow1,
+                            backgroundImage: imagePath != null
+                                ? FileImage(File(imagePath))
+                                : null,
+                            child: imagePath == null
+                                ? Icon(Icons.person,
+                                    color: Theme.of(context).primaryColor,
+                                    size: 50)
+                                : null,
+                          );
+                        }),
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor),
+                      );
+                    } else if (snapshot.hasError ||
+                        !snapshot.hasData ||
+                        !snapshot.data!.exists) {
+                      return UserAccountsDrawerHeader(
+                        accountName: Text(
+                          'User',
+                          style: AppTextStyles.bodyMedium
+                              .copyWith(color: Colors.white),
+                        ),
+                        accountEmail: Text(
+                          'user@email.com',
+                          style: AppTextStyles.bodySmall
+                              .copyWith(color: Colors.white),
+                        ),
+                        currentAccountPicture: Obx(() {
+                          final imagePath = profileController.getProfileImage();
+                          return CircleAvatar(
+                            backgroundColor: CustomColors.yellow1,
+                            backgroundImage: imagePath != null
+                                ? FileImage(File(imagePath))
+                                : null,
+                            child: imagePath == null
+                                ? Icon(Icons.person,
+                                    color: Theme.of(context).primaryColor,
+                                    size: 50)
+                                : null,
+                          );
+                        }),
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor),
+                      );
+                    } else {
+                      final userData = snapshot.data!.data()!;
+                      final name =
+                          "${userData['firstName']} ${userData['lastName']}";
+                      final email = userData['email'];
+
+                      return UserAccountsDrawerHeader(
+                        accountName: Text(
+                          name,
+                          style: AppTextStyles.bodyMedium
+                              .copyWith(color: Colors.white),
+                        ),
+                        accountEmail: Text(
+                          email,
+                          style: AppTextStyles.bodySmall
+                              .copyWith(color: Colors.white),
+                        ),
+                        currentAccountPicture: Obx(() {
+                          final imagePath = profileController.getProfileImage();
+                          return CircleAvatar(
+                            backgroundColor: CustomColors.yellow1,
+                            backgroundImage: imagePath != null
+                                ? FileImage(File(imagePath))
+                                : null,
+                            child: imagePath == null
+                                ? Icon(Icons.person,
+                                    color: Theme.of(context).primaryColor,
+                                    size: 50)
+                                : null,
+                          );
+                        }),
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor),
+                      );
+                    }
+                  },
+                ),
+                // Theme toggle button positioned in top right
+                Positioned(
+                  top: 40,
+                  right: 16,
+                  child: Obx(() => IconButton(
+                        icon: Icon(
+                          themeController.isDarkMode.value
+                              ? Icons.wb_sunny // Sun icon for dark mode
+                              : Icons.nightlight_round,
+                          // Moon icon for light mode
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                        onPressed: () {
+                          themeController.toggleTheme();
+                        },
+                      )),
+                ),
+              ],
+            ),
+            _buildListTile(context, Icons.edit, AppStrings.editprofile, () {
+              Get.toNamed(AppRoutes.profile);
+            }),
+            _buildListTile(context, Icons.history, AppStrings.rideHistory, () {
+              Get.toNamed(AppRoutes.rideHistory);
+            }),
+            _buildListTile(context, Icons.upcoming, AppStrings.upcomingride,
+                () {
+              Get.toNamed(AppRoutes.joinedRide);
+            }),
+            _buildListTile(context, Icons.warning, AppStrings.complain, () {
+              Get.toNamed(AppRoutes.complain);
+            }),
+            _buildListTile(context, Icons.info, AppStrings.aboutus, () {
+              Get.toNamed(AppRoutes.aboutus);
+            }),
+            _buildListTile(
+                context, Icons.privacy_tip_outlined, AppStrings.privacy, () {
+              Get.toNamed(AppRoutes.privacy);
+            }),
+            _buildListTile(
+                context, Icons.live_help_outlined, AppStrings.helpandsupport,
+                () {
+              Get.toNamed(AppRoutes.helpandsupport);
+            }),
+            _buildListTile(context, Icons.support_agent, AppStrings.contactus,
+                () {
+              Get.toNamed(AppRoutes.contactus);
+            }),
+            ListTile(
+              leading:
+                  Icon(Icons.logout, color: Theme.of(context).iconTheme.color),
+              title: Text(
+                AppStrings.logout,
+                style: AppTextStyles.bodyMedium.copyWith(
+                    color: Theme.of(context).textTheme.bodyMedium?.color),
+              ),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    backgroundColor: Theme.of(context).dialogBackgroundColor,
+                    title: Text(
+                      AppStrings.logout,
+                      style: AppTextStyles.headline4Light,
+                    ),
+                    content: Text(
+                      AppStrings.logoutmessage,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                          color: Theme.of(context).textTheme.bodyMedium?.color),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Get.back(),
+                        child: Text(
+                          AppStrings.cancel,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.color),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          await prefs.setBool('isLoggedIn', false);
+                          await FirebaseAuth.instance.signOut();
+                          Get.back();
+                          Get.offAllNamed(AppRoutes.login);
+                        },
+                        child: Text(
+                          AppStrings.yes,
+                          style: AppTextStyles.bodyMedium
+                              .copyWith(color: CustomColors.error),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Obx(() => CustomElevatedButton(
+                    backgroundColor: CustomColors.error,
+                    borderRadius: 12,
+                    isLoading: controller.isLoading.value,
+                    label: AppStrings.deleteaccount,
+                    textColor: CustomColors.background,
+                    onPressed: () => controller.deleteAccount(context),
+                  )),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListTile(
+      BuildContext context, IconData icon, String title, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon, color: Theme.of(context).iconTheme.color),
+      title: Text(
+        title,
+        style: AppTextStyles.bodyMedium.copyWith(
+          color: Theme.of(context).textTheme.bodyMedium?.color,
+        ),
+      ),
+      onTap: onTap,
+    );
+  }
+}

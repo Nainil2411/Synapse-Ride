@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "703752159317",
+    "project_id": "synapse-ride",
+    "storage_bucket": "synapse-ride.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:703752159317:android:40677dfcc9e6f2666214dc",
+        "android_client_info": {
+          "package_name": "com.example.synapseride"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjIcwYf5PlmawvJ5axCyd4e8iAl05Szoo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
