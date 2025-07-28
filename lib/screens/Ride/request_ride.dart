@@ -24,69 +24,117 @@ class RequestRideScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _buildGlassCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionTitle('Personal Information'),
-                  const SizedBox(height: 16),
-                  _buildReadOnlyTextField(
-                    controller: controller.nameController,
-                    label: 'Your Name',
-                    icon: Icons.person,
-                  ),
-                  const SizedBox(height: 16),
-                  _buildReadOnlyTextField(
-                    controller: controller.phoneController,
-                    label: 'Phone Number',
-                    icon: Icons.phone,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            _buildGlassCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionTitle('Trip Details'),
-                  const SizedBox(height: 16),
-                  _buildLocationField(
-                    controller: controller.fromAddressController,
-                    label: 'Pickup Location',
-                    icon: Icons.my_location,
-                    onTap: () => controller.selectPickupLocation(),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildLocationField(
-                    controller: controller.toAddressController,
-                    label: 'Destination',
-                    icon: Icons.location_on,
-                    onTap: () => controller.selectDestinationLocation(),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildTimeSelector(),
-                  const SizedBox(height: 16),
-                  _buildSeatsSelector(),
-                  const SizedBox(height: 16),
-                  _buildUrgencySelector(),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            _buildGlassCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionTitle('Additional Notes (Optional)'),
-                  const SizedBox(height: 16),
-                  _buildTextField(
-                    controller: controller.notesController,
-                    label: 'Any special requirements or notes',
-                    icon: Icons.note,
-                    maxLines: 3,
-                  ),
-                ],
+            _buildPersonalInfoCard(),
+            const SizedBox(height: 24),
+            _buildTripDetailsCard(),
+            const SizedBox(height: 24),
+            _buildNotesCard(),
+            const SizedBox(height: 32),
+            _buildSubmitButton(),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // MARK: - Card Builders
+  Widget _buildPersonalInfoCard() {
+    return _buildCard(
+      icon: Icons.person_outline,
+      title: 'Personal Information',
+      iconColor: const Color(0xFF6366F1),
+      child: Column(
+        children: [
+          _buildModernTextField(
+            controller: controller.nameController,
+            label: 'Your Name',
+            icon: Icons.person_outline,
+            isReadOnly: true,
+          ),
+          const SizedBox(height: 16),
+          _buildModernTextField(
+            controller: controller.phoneController,
+            label: 'Phone Number',
+            icon: Icons.phone_outlined,
+            isReadOnly: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTripDetailsCard() {
+    return _buildCard(
+      icon: Icons.route_outlined,
+      title: 'Trip Details',
+      iconColor: const Color(0xFF8B5CF6),
+      child: Column(
+        children: [
+          _buildLocationField(
+            controller: controller.fromAddressController,
+            label: 'Pickup Location',
+            icon: Icons.my_location_outlined,
+            onTap: () => controller.selectPickupLocation(),
+            color: const Color(0xFF10B981),
+          ),
+          const SizedBox(height: 16),
+          _buildLocationField(
+            controller: controller.toAddressController,
+            label: 'Destination',
+            icon: Icons.location_on_outlined,
+            onTap: () => controller.selectDestinationLocation(),
+            color: const Color(0xFFEF4444),
+          ),
+          const SizedBox(height: 20),
+          _buildTimeSelector(),
+          const SizedBox(height: 16),
+          _buildSeatsSelector(),
+          const SizedBox(height: 20),
+          _buildUrgencySelector(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNotesCard() {
+    return _buildCard(
+      icon: Icons.edit_note_outlined,
+      title: 'Additional Notes',
+      iconColor: const Color(0xFFF59E0B),
+      child: _buildModernTextField(
+        controller: controller.notesController,
+        label: 'Any special requirements or notes',
+        icon: Icons.note_outlined,
+        maxLines: 3,
+      ),
+      trailing: _buildOptionalBadge(),
+    );
+  }
+
+  // MARK: - Reusable Components
+  Widget _buildCard({
+    required IconData icon,
+    required String title,
+    required Color iconColor,
+    required Widget child,
+    Widget? trailing,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: _getCardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              _buildIconContainer(icon, iconColor),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: _getCardTitleStyle(),
+                ),
               ),
             ),
             const SizedBox(height: 30),
