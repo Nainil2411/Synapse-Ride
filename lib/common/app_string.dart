@@ -53,6 +53,7 @@ class AppStrings {
       'Password must contain: At least 6 characters \n Uppercase letter \n Lowercase letter';
   static const String successfulPasswordReset = 'Password reset successful';
   static const String linksent = 'Password reset link sent to your email';
+  static const String wrongPassword = 'Wrong password provided.';
 
   // Navigation
   static const String back = 'Back';

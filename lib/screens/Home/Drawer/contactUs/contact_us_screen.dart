@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:synapseride/common/app_string.dart';
+import 'package:synapseride/common/complain_contact_common.dart';
 import 'package:synapseride/common/custom_appbar.dart';
-import 'package:synapseride/common/custom_color.dart';
 import 'package:synapseride/controller/contact_us_controller.dart';
 import 'package:synapseride/screens/Home/Drawer/contactUs/contactUs_UI_form.dart';
 import 'package:synapseride/screens/Home/Drawer/contactUs/contact_us_listUI.dart';
@@ -14,40 +14,53 @@ class ContactUsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      return Scaffold(
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
         appBar: CustomAppBar(
           title: AppStrings.contactus,
-          actions: [
-            if (controller.hasComplaints.value)
-              IconButton(
-                icon: const Icon(Icons.history, color: CustomColors.yellow1),
-                onPressed: () {
-                  controller.viewAll.value = !controller.viewAll.value;
-                },
+        ),
+        body: Column(
+          children: [
+            // Common Tab Bar
+            CommonTabBar(
+              tabController: controller.tabController,
+              tabs: const [
+                CommonTab(
+                  icon: Icons.message_rounded,
+                  text: 'Send Message',
+                ),
+                CommonTab(
+                  icon: Icons.history_rounded,
+                  text: 'History',
+                ),
+              ],
+            ),
+            // Tab Bar View
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.grey[900]!.withOpacity(0.1),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+                child: TabBarView(
+                  controller: controller.tabController,
+                  children: const [
+                    ContactUsForm(),
+                    ContactUsHistory(),
+                  ],
+                ),
               ),
+            ),
           ],
         ),
-        body: controller.viewAll.value
-            ? ComplaintsListUI(
-                onBackPressed: () {
-                  controller.viewAll.value = false;
-                },
-                onDeleteComplaint: controller.deleteComplaint,
-              )
-            : ContactFormUI(
-                nameController: controller.nameController,
-                emailController: controller.emailController,
-                phoneController: controller.phoneController,
-                messageController: controller.messageController,
-                nameError: controller.nameError.value,
-                emailError: controller.emailError.value,
-                phoneError: controller.phoneError.value,
-                messageError: controller.messageError.value,
-                isLoading: controller.isLoading.value,
-                onSubmitForm: controller.submitForm,
-              ),
-      );
-    });
+      ),
+    );
   }
 }

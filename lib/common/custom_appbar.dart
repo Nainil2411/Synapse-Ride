@@ -10,6 +10,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBackPressed;
   final Color? backgroundColor;
   final Color? foregroundColor;
+  final PreferredSizeWidget? bottom;
 
   const CustomAppBar({
     super.key,
@@ -19,6 +20,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onBackPressed,
     this.backgroundColor,
     this.foregroundColor,
+    this.bottom,
   });
 
   @override
@@ -41,11 +43,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             )
           : null,
       actions: actions,
+      bottom: bottom,
       elevation: 0,
       centerTitle: true,
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize {
+    if (bottom != null) {
+      return Size.fromHeight(kToolbarHeight + bottom!.preferredSize.height);
+    }
+    return const Size.fromHeight(kToolbarHeight);
+  }
 }

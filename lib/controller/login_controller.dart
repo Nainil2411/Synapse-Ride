@@ -66,10 +66,32 @@ class LoginController extends GetxController {
           message.value = 'Login successful!';
         }
       } catch (e) {
-        message.value = e.toString();
+        // Remove 'Exception: ' prefix if present
+        final errorMsg = e.toString().replaceFirst('Exception: ', '');
+        message.value = errorMsg;
       } finally {
         isLoading.value = false;
       }
+    }
+  }
+
+  void handleGoogleSignIn() async {
+    isLoading.value = true;
+    message.value = '';
+    try {
+      final userCredential = await _authService.signInWithGoogle();
+      if (userCredential != null && userCredential.user != null) {
+        await _authService.updateLastLogin(userCredential.user!.uid);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+        Get.offAllNamed(AppRoutes.home);
+        message.value = 'Login successful!';
+      }
+    } catch (e) {
+      final errorMsg = e.toString().replaceFirst('Exception: ', '');
+      message.value = errorMsg;
+    } finally {
+      isLoading.value = false;
     }
   }
 }

@@ -106,10 +106,12 @@ class EditRideController extends GetxController {
   }
 
   void showSeatSelectionBottomSheet() async {
+    final maxSeats = selectedVehicle.value == 'car' ? 7 : 1;
     final result = await UIUtils.showSeatSelectionBottomSheet(
       context: Get.context!,
       vehicleType: selectedVehicle.value,
       initialSeats: selectedSeats.value,
+      maxSeats: maxSeats,
     );
     if (result != null) {
       selectedSeats.value = result;

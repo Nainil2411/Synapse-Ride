@@ -1,120 +1,153 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:synapseride/common/app_string.dart';
+import 'package:get/get.dart';
 import 'package:synapseride/common/app_textstyle.dart';
+import 'package:synapseride/common/complain_contact_common.dart';
 import 'package:synapseride/common/custom_color.dart';
-import 'package:synapseride/utils/utility.dart';
+import 'package:synapseride/controller/contact_us_controller.dart';
 
-class ComplaintsListUI extends StatelessWidget {
-  final void Function() onBackPressed;
-  final Function(String) onDeleteComplaint;
-
-  const ComplaintsListUI({
-    super.key,
-    required this.onBackPressed,
-    required this.onDeleteComplaint,
-  });
+class ContactUsHistory extends StatelessWidget {
+  const ContactUsHistory({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final ContactUsController controller = Get.find<ContactUsController>();
+
+    return Obx(() {
+      if (controller.contacts.isEmpty) {
+        return const CommonEmptyState(
+          icon: Icons.message_outlined,
+          title: 'No messages yet',
+          subtitle: 'Your message history will appear here',
+          actionText: 'Switch to "Send Message" tab to get started',
+        );
+      }
+
+      return CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+              child: _buildHistoryHeader(controller),
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                final contact = controller.contacts[index];
+                return CommonHistoryCard(
+                  title: contact['name'] ?? 'Unknown',
+                  subtitle: contact['email'] ?? '',
+                  description: contact['message'] ?? 'No message',
+                  date: _formatDate(contact['timestamp']),
+                  id: '#${(index + 1).toString().padLeft(3, '0')}',
+                  icon: Icons.message_rounded,
+                  iconColor: Colors.blue,
+                  statusChip: const CommonStatusChip(
+                    text: 'Sent',
+                    color: Colors.green,
+                  ),
+                  onTap: () => _showContactDetails(contact),
+                  onDelete: () => _showDeleteConfirmation(index, controller),
+                );
+              },
+              childCount: controller.contacts.length,
+            ),
+          ),
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 24),
+          ),
+        ],
+      );
+    });
+  }
+
+  Widget _buildHistoryHeader(ContactUsController controller) {
+    return Row(
       children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: CustomColors.yellow1.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: CustomColors.yellow1.withOpacity(0.3),
+              width: 1,
+            ),
+          ),
+          child: Icon(
+            Icons.history_rounded,
+            color: CustomColors.yellow1,
+            size: 20,
+          ),
+        ),
+        const SizedBox(width: 12),
         Expanded(
-          child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseAuth.instance.currentUser != null
-                ? FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .collection('contact_us')
-                    .orderBy('timestamp', descending: true)
-                    .snapshots()
-                : Stream.empty(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return UIUtils.circleloading();
-              }
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    '${AppStrings.error}: ${snapshot.error}',
-                    style: AppTextStyles.bodyMedium
-                        .copyWith(color: CustomColors.background),
-                  ),
-                );
-              }
-              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return Center(
-                  child: Text(
-                    AppStrings.noComplaintsFound,
-                    style: AppTextStyles.bodyMedium
-                        .copyWith(color: CustomColors.background),
-                  ),
-                );
-              }
-              return ListView.builder(
-                itemCount: snapshot.data!.docs.length,
-                itemBuilder: (context, index) {
-                  final doc = snapshot.data!.docs[index];
-                  final data = doc.data() as Map<String, dynamic>;
-                  final timestamp = data['timestamp'] as Timestamp?;
-                  final formattedDate = timestamp != null
-                      ? DateFormat('MMM d, yyyy - h:mm a')
-                          .format(timestamp.toDate())
-                      : AppStrings.dateNotAvailable;
-                  return Card(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 8.0,
-                    ),
-                    color: Colors.grey[900],
-                    child: ListTile(
-                      title: Text(
-                        data['message'] ?? AppStrings.noMessage,
-                        style: AppTextStyles.labelLarge.copyWith(
-                          color: CustomColors.background,
-                        ),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 8),
-                          Text(
-                            '${AppStrings.from}: ${data['name']}',
-                            style: AppTextStyles.bodySmall
-                                .copyWith(color: CustomColors.grey400),
-                          ),
-                          Text(
-                            '${AppStrings.email}: ${data['email']}',
-                            style: AppTextStyles.bodySmall
-                                .copyWith(color: CustomColors.grey400),
-                          ),
-                          Text(
-                            '${AppStrings.phone}: ${data['phone']}',
-                            style: AppTextStyles.bodySmall
-                                .copyWith(color: CustomColors.grey400),
-                          ),
-                          Text(
-                            formattedDate,
-                            style: AppTextStyles.bodySmall
-                                .copyWith(color: CustomColors.grey400),
-                          ),
-                        ],
-                      ),
-                      trailing: IconButton(
-                        icon:
-                            const Icon(Icons.delete, color: CustomColors.error),
-                        onPressed: () => onDeleteComplaint(doc.id),
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Message History',
+                style: AppTextStyles.labelLarge.copyWith(
+                  color: CustomColors.background,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                '${controller.contacts.length} message${controller.contacts.length == 1 ? '' : 's'} sent',
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: CustomColors.grey400,
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
+  }
+
+  void _showContactDetails(Map<String, dynamic> contact) {
+    CommonDialogs.showDetailBottomSheet(
+      data: contact,
+      title: contact['name'] ?? 'Unknown',
+      icon: Icons.message_rounded,
+      iconColor: Colors.blue,
+      additionalDetails: [
+        DetailItem(
+          label: 'Email',
+          value: contact['email'] ?? 'N/A',
+          icon: Icons.email_outlined,
+        ),
+        DetailItem(
+          label: 'Phone',
+          value: contact['phone'] ?? 'N/A',
+          icon: Icons.phone_outlined,
+        ),
+      ],
+    );
+  }
+
+  void _showDeleteConfirmation(int index, ContactUsController controller) {
+    CommonDialogs.showDeleteConfirmation(
+      context: Get.context!,
+      title: 'Delete Message?',
+      message: 'This action cannot be undone. The message will be permanently removed.',
+      onConfirm: () => controller.deleteContact(index),
+    );
+  }
+
+  String _formatDate(dynamic timestamp) {
+    if (timestamp == null) return 'Date not available';
+
+    try {
+      DateTime date;
+      if (timestamp is DateTime) {
+        date = timestamp;
+      } else {
+        date = timestamp.toDate();
+      }
+      return '${date.day}/${date.month}/${date.year} at ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return 'Date not available';
+    }
   }
 }

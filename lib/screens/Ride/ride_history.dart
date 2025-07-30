@@ -120,7 +120,7 @@ class RideHistoryScreen extends StatelessWidget {
             .delete();
 
         Get.snackbar(AppStrings.success, AppStrings.rideDeleted,
-            backgroundColor: CustomColors.yellow1.withOpacity(0.8));
+            backgroundColor: CustomColors.green1);
       } catch (e) {
         Get.snackbar('', '${AppStrings.errorDeletingRide} $e',
             backgroundColor: CustomColors.error);

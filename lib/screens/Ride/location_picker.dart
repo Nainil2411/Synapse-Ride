@@ -108,6 +108,7 @@ class LocationPickerScreen extends StatelessWidget {
             left: 16,
             right: 16,
             child: Card(
+              color: CustomColors.background,
               elevation: 5,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),

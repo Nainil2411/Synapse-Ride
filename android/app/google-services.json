@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "703752159317",
+    "project_id": "synapse-ride",
+    "storage_bucket": "synapse-ride.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:703752159317:android:40677dfcc9e6f2666214dc",
+        "android_client_info": {
+          "package_name": "com.example.synapseride"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "703752159317-s9u7f8erjc1t4t4chobb5v6133srs81f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.synapseride",
+            "certificate_hash": "e3481705c2a9521fa45073d2225df3dc35dc942d"
+          }
+        },
+        {
+          "client_id": "703752159317-s1vv7k4qfpg79e15q8o34h0d3fjvdhm8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjIcwYf5PlmawvJ5axCyd4e8iAl05Szoo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "703752159317-s1vv7k4qfpg79e15q8o34h0d3fjvdhm8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "703752159317-fngs17478svk028adernhi9frpmo6abs.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.synapseride"
+              }
+            }
+
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

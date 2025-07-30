@@ -6,9 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:synapseride/Routes/app_page.dart';
 import 'package:synapseride/Routes/routes.dart';
+import 'package:synapseride/common/custom_color.dart';
 import 'package:synapseride/controller/profile_controller.dart';
-import 'package:synapseride/controller/theme_controller.dart'; // Add this import
 import 'package:synapseride/firebase_options.dart';
+import 'package:synapseride/utils/firebase.dart';
 import 'package:synapseride/utils/notifications.dart';
 import 'package:synapseride/utils/utility.dart';
 
@@ -19,8 +20,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  Get.put(FirebaseAuthService());
   Get.put(ProfileController());
-  Get.put(ThemeController()); // Add this line
   ConnectivityService().initialize();
   await NotificationService().initialize();
   runApp(const MyApp());
@@ -35,7 +36,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final ValueNotifier<bool> isOffline = ConnectivityService().isOffline;
-  final ThemeController themeController = Get.find<ThemeController>(); // Add this line
   bool _dialogShown = false;
 
   @override
@@ -100,9 +100,6 @@ class _MyAppState extends State<MyApp> {
     return GetMaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
-      theme: themeController.lightTheme, // Updated
-      darkTheme: themeController.darkTheme, // Updated
-      themeMode: ThemeMode.system, // Updated
       title: 'Synapse Ride',
       initialRoute: AppRoutes.splash,
       getPages: AppPages.routes,
@@ -112,6 +109,11 @@ class _MyAppState extends State<MyApp> {
           onTap: () => UIUtils.keyboardDismiss(context),
         );
       },
+      theme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: CustomColors.textPrimary,
+      ),
     );
   }
 }
@@ -138,7 +140,7 @@ class ConnectivityService {
 
   void _updateStatus(List<ConnectivityResult> results) {
     final hasConnection =
-    results.any((result) => result != ConnectivityResult.none);
+        results.any((result) => result != ConnectivityResult.none);
     isOffline.value = !hasConnection;
   }
 

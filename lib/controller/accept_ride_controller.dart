@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +16,8 @@ class AcceptedRidesController extends GetxController {
 
   @override
   void onInit() {
-    fetchAcceptedRides();
     super.onInit();
+    fetchAcceptedRides();
   }
 
   Future<void> fetchAcceptedRides() async {
@@ -132,42 +134,6 @@ class AcceptedRidesController extends GetxController {
     }
   }
 
-  Future<void> showCompleteConfirmationDialog(
-      String requestId, String requesterName) async {
-    return showDialog<void>(
-      context: Get.context!,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.grey[900],
-          title: Text('Complete Ride', style: TextStyle(color: Colors.white)),
-          content: Text(
-            'Mark the ride with $requesterName as completed?',
-            style: TextStyle(color: Colors.white70),
-          ),
-          actions: <Widget>[
-            TextButton(
-              style: TextButton.styleFrom(foregroundColor: Colors.grey),
-              child: Text(AppStrings.cancel),
-              onPressed: () => Get.back(),
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.black,
-                backgroundColor: Colors.green,
-              ),
-              child: Text('Complete'),
-              onPressed: () {
-                Get.back();
-                markRideAsCompleted(requestId);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Future<void> showCancelConfirmationDialog(
       String requestId, String requesterName) async {
     return showDialog<void>(
@@ -196,6 +162,7 @@ class AcceptedRidesController extends GetxController {
               child: Text('Cancel Acceptance'),
               onPressed: () {
                 Get.back();
+                Get.back(result: true);
                 cancelAcceptedRide(requestId);
               },
             ),

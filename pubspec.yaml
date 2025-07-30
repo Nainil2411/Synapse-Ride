@@ -19,7 +19,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.6.1
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.19.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -69,11 +70,15 @@ dependencies:
   permission_handler: ^11.3.1
   shimmer: ^3.0.0
   animate_do: ^4.2.0
+  mockito: ^5.5.0
+  google_sign_in: ^7.1.1
+  dropdown_button2: ^2.3.9
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  integration_test:
+    sdk: flutter
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your

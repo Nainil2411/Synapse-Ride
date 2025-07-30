@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:synapseride/common/complain_contact_common.dart';
 import 'package:synapseride/common/custom_appbar.dart';
-import 'package:synapseride/common/custom_color.dart';
 import 'package:synapseride/controller/complain_controller.dart';
 import 'package:synapseride/screens/Home/Drawer/complain/complain_form_UI.dart';
 import 'package:synapseride/screens/Home/Drawer/complain/complain_history_UI.dart';
@@ -13,34 +13,53 @@ class ComplainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Obx(() => CustomAppBar(
-              title: controller.showHistory.value
-                  ? 'Complaint History'
-                  : 'Complain',
-              actions: [
-                Obx(() {
-                  if (controller.complaints.isNotEmpty) {
-                    return IconButton(
-                      icon: Icon(
-                        controller.showHistory.value
-                            ? Icons.add_circle_outline
-                            : Icons.history,
-                        color: CustomColors.yellow1,
-                      ),
-                      onPressed: controller.toggleHistoryView,
-                    );
-                  }
-                  return const SizedBox.shrink();
-                }),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: CustomAppBar(
+          title: 'Complain Center',
+        ),
+        body: Column(
+          children: [
+            // Common Tab Bar
+            CommonTabBar(
+              tabController: controller.tabController,
+              tabs: const [
+                CommonTab(
+                  icon: Icons.edit_note_rounded,
+                  text: 'New Complaint',
+                ),
+                CommonTab(
+                  icon: Icons.history_rounded,
+                  text: 'History',
+                ),
               ],
-            )),
+            ),
+            // Tab Bar View
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.grey[900]!.withOpacity(0.1),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+                child: TabBarView(
+                  controller: controller.tabController,
+                  children: const [
+                    ComplainForm(),
+                    ComplainHistory(),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-      body: Obx(() => controller.showHistory.value
-          ? ComplainHistoryUI(controller: controller)
-          : ComplainFormUI(controller: controller)),
     );
   }
 }

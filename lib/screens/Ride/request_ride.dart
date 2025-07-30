@@ -1,10 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:synapseride/common/app_textstyle.dart';
 import 'package:synapseride/common/custom_appbar.dart';
-import 'package:synapseride/common/custom_color.dart';
 import 'package:synapseride/controller/request_ride_controller.dart';
 import 'package:synapseride/utils/utility.dart';
 
@@ -21,7 +18,7 @@ class RequestRideScreen extends StatelessWidget {
         onBackPressed: () => Get.back(),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             _buildPersonalInfoCard(),
@@ -136,116 +133,70 @@ class RequestRideScreen extends StatelessWidget {
                   style: _getCardTitleStyle(),
                 ),
               ),
-            ),
-            const SizedBox(height: 30),
-            _buildSubmitButton(),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGlassCard({required Widget child}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.85),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: CustomColors.green1.withOpacity(0.3),
-              width: 1,
-            ),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.black.withOpacity(0.9),
-                CustomColors.green1.withOpacity(0.1),
-              ],
-            ),
+              if (trailing != null) trailing,
+            ],
           ),
-          child: child,
+          const SizedBox(height: 20),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIconContainer(IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Icon(icon, color: color, size: 20),
+    );
+  }
+
+  Widget _buildOptionalBadge() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color(0xFF374151),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        'Optional',
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.7),
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: AppTextStyles.labelLarge.copyWith(
-        color: CustomColors.background,
-        fontWeight: FontWeight.bold,
-        fontSize: 18,
-      ),
-    );
-  }
-
-  Widget _buildTextField({
+  // MARK: - Form Fields
+  Widget _buildModernTextField({
     required TextEditingController controller,
     required String label,
     required IconData icon,
     TextInputType? keyboardType,
     int maxLines = 1,
+    bool isReadOnly = false,
   }) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: CustomColors.green1.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
+      decoration: _getTextFieldDecoration(isReadOnly),
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
         maxLines: maxLines,
-        style: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
+        readOnly: isReadOnly,
+        style: _getTextFieldStyle(isReadOnly),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: AppTextStyles.labelMedium.copyWith(
-            color: Colors.white,
+          labelStyle: _getLabelStyle(isReadOnly),
+          prefixIcon: Icon(
+            icon,
+            color: _getIconColor(isReadOnly),
+            size: 20,
           ),
-          prefixIcon: Icon(icon, color: Colors.white),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.all(16),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildReadOnlyTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: CustomColors.green1.withOpacity(0.2),
-          width: 1,
-        ),
-      ),
-      child: TextField(
-        controller: controller,
-        readOnly: true,
-        style: AppTextStyles.bodyMedium.copyWith(
-          color: Colors.white.withOpacity(0.7),
-        ),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: AppTextStyles.labelMedium.copyWith(
-            color: Colors.white.withOpacity(0.6),
-          ),
-          prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.6)),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.all(16),
         ),
@@ -258,18 +209,12 @@ class RequestRideScreen extends StatelessWidget {
     required String label,
     required IconData icon,
     required VoidCallback onTap,
+    required Color color,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: CustomColors.green1.withOpacity(0.3),
-            width: 1,
-          ),
-        ),
+        decoration: _getTextFieldDecoration(false),
         child: AbsorbPointer(
           child: TextField(
             controller: controller,
@@ -278,18 +223,10 @@ class RequestRideScreen extends StatelessWidget {
             decoration: InputDecoration(
               labelText: label,
               hintText: 'Tap to select $label',
-              hintStyle: AppTextStyles.bodyMedium.copyWith(
-                color: Colors.white.withOpacity(0.5),
-              ),
-              labelStyle: AppTextStyles.labelMedium.copyWith(
-                color: Colors.white,
-              ),
-              prefixIcon: Icon(icon, color: Colors.white),
-              suffixIcon: Icon(
-                Icons.arrow_forward_ios,
-                color: CustomColors.green1.withOpacity(0.6),
-                size: 16,
-              ),
+              hintStyle: _getHintStyle(),
+              labelStyle: _getLabelStyle(false),
+              prefixIcon: _buildLocationIcon(icon, color),
+              suffixIcon: _buildChevronIcon(),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.all(16),
             ),
@@ -299,100 +236,88 @@ class RequestRideScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildLocationIcon(IconData icon, Color color) {
+    return Container(
+      margin: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(icon, color: color, size: 16),
+    );
+  }
+
+  Widget _buildChevronIcon() {
+    return Icon(
+      Icons.chevron_right,
+      color: Colors.white.withOpacity(0.6),
+      size: 20,
+    );
+  }
+
+  // MARK: - Selectors
   Widget _buildTimeSelector() {
     return Obx(() {
-      return GestureDetector(
+      return _buildSelector(
         onTap: () => controller.selectTime(Get.context!),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: CustomColors.green1.withOpacity(0.3),
-              width: 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.access_time, color: CustomColors.background),
-              const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Preferred Time',
-                    style: AppTextStyles.labelMedium.copyWith(
-                      color: CustomColors.background.withOpacity(0.8),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    UIUtils.formatTimeIn12HourFormat(
-                        controller.selectedTime.value),
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              Icon(Icons.arrow_forward_ios,
-                  color: CustomColors.green1.withOpacity(0.6), size: 16),
-            ],
-          ),
-        ),
+        icon: Icons.access_time_outlined,
+        iconColor: const Color(0xFF3B82F6),
+        title: 'Preferred Time',
+        value: UIUtils.formatTimeIn12HourFormat(controller.selectedTime.value),
       );
     });
   }
 
   Widget _buildSeatsSelector() {
     return Obx(() {
-      return GestureDetector(
+      return _buildSelector(
         onTap: controller.handleSeatSelection,
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: CustomColors.green1.withOpacity(0.3),
-              width: 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.airline_seat_recline_normal,
-                  color: CustomColors.background),
-              const SizedBox(width: 16),
-              Column(
+        icon: Icons.airline_seat_recline_normal_outlined,
+        iconColor: const Color(0xFF06B6D4),
+        title: 'Seats Needed',
+        value: '${controller.selectedSeats.value} ${controller.selectedSeats.value == 1 ? 'seat' : 'seats'}',
+      );
+    });
+  }
+
+  Widget _buildSelector({
+    required VoidCallback onTap,
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String value,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: _getTextFieldDecoration(false),
+        child: Row(
+          children: [
+            _buildIconContainer(icon, iconColor),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Seats Needed',
-                    style: AppTextStyles.labelMedium.copyWith(
-                      color: CustomColors.background.withOpacity(0.8),
-                    ),
+                    title,
+                    style: _getSelectorTitleStyle(),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${controller.selectedSeats.value} ${controller.selectedSeats.value == 1 ? 'seat' : 'seats'}',
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    value,
+                    style: _getSelectorValueStyle(),
                   ),
                 ],
               ),
-              const Spacer(),
-              Icon(Icons.arrow_forward_ios,
-                  color: CustomColors.green1.withOpacity(0.6), size: 16),
-            ],
-          ),
+            ),
+            _buildChevronIcon(),
+          ],
         ),
-      );
-    });
+      ),
+    );
   }
 
   Widget _buildUrgencySelector() {
@@ -401,20 +326,27 @@ class RequestRideScreen extends StatelessWidget {
       children: [
         Text(
           'Urgency Level',
-          style: AppTextStyles.labelMedium.copyWith(
-            color: CustomColors.background.withOpacity(0.8),
-          ),
+          style: _getSelectorTitleStyle(),
         ),
         const SizedBox(height: 12),
         Row(
           children: [
             Expanded(
-              child: _buildUrgencyOption('normal', 'Normal', Icons.schedule),
+              child: _buildUrgencyOption(
+                'normal',
+                'Normal',
+                Icons.schedule_outlined,
+                const Color(0xFF10B981),
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child:
-                  _buildUrgencyOption('urgent', 'Urgent', Icons.priority_high),
+              child: _buildUrgencyOption(
+                'urgent',
+                'Urgent',
+                Icons.priority_high_outlined,
+                const Color(0xFFEF4444),
+              ),
             ),
           ],
         ),
@@ -422,45 +354,28 @@ class RequestRideScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildUrgencyOption(String value, String label, IconData icon) {
+  Widget _buildUrgencyOption(String value, String label, IconData icon, Color color) {
     return Obx(() {
+      final isSelected = controller.selectedUrgency.value == value;
       return GestureDetector(
         onTap: () => controller.selectedUrgency.value = value,
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: controller.selectedUrgency.value == value
-                ? CustomColors.green1.withOpacity(0.2)
-                : Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: controller.selectedUrgency.value == value
-                  ? CustomColors.green1
-                  : CustomColors.green1.withOpacity(0.3),
-              width: controller.selectedUrgency.value == value ? 2 : 1,
-            ),
-          ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          height: 56, // Fixed height to prevent shaking
+          padding: const EdgeInsets.symmetric(horizontal: 16), // Only horizontal padding
+          decoration: _getUrgencyOptionDecoration(isSelected, color),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 icon,
-                color: controller.selectedUrgency.value == value
-                    ? CustomColors.green1
-                    : Colors.white.withOpacity(0.7),
-                size: 20,
+                color: _getUrgencyIconColor(isSelected, color),
+                size: 18,
               ),
               const SizedBox(width: 8),
               Text(
                 label,
-                style: AppTextStyles.labelMedium.copyWith(
-                  color: controller.selectedUrgency.value == value
-                      ? CustomColors.green1
-                      : Colors.white.withOpacity(0.7),
-                  fontWeight: controller.selectedUrgency.value == value
-                      ? FontWeight.bold
-                      : FontWeight.normal,
-                ),
+                style: _getUrgencyTextStyleFixed(isSelected, color), // Use fixed style
               ),
             ],
           ),
@@ -469,52 +384,221 @@ class RequestRideScreen extends StatelessWidget {
     });
   }
 
+  // MARK: - Submit Button
   Widget _buildSubmitButton() {
     return Obx(() {
-      return SizedBox(
+      return Container(
         width: double.infinity,
         height: 56,
+        decoration: _getSubmitButtonDecoration(),
         child: ElevatedButton(
-          onPressed:
-              controller.isLoading.value ? null : controller.submitRideRequest,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: CustomColors.green1,
-            foregroundColor: Colors.black,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            elevation: 8,
-          ),
+          onPressed: controller.isLoading.value ? null : controller.submitRideRequest,
+          style: _getSubmitButtonStyle(),
           child: controller.isLoading.value
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Submitting...',
-                      style: AppTextStyles.buttonText.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                )
-              : Text(
-                  'Submit Ride Request',
-                  style: AppTextStyles.buttonText.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
+              ? _buildLoadingContent()
+              : _buildSubmitContent(),
         ),
       );
     });
+  }
+
+  Widget _buildLoadingContent() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 20,
+          height: 20,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          'Submitting...',
+          style: _getSubmitButtonTextStyle(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSubmitContent() {
+    return Text(
+      'Submit Ride Request',
+      style: _getSubmitButtonTextStyle(),
+    );
+  }
+
+  // MARK: - Styles
+  BoxDecoration _getCardDecoration() {
+    return BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color(0xFF1A1A1D),
+          Color(0xFF16161A),
+        ],
+      ),
+      borderRadius: BorderRadius.circular(24),
+      border: Border.all(
+        color: const Color(0xFF2A2A2E),
+        width: 1,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.3),
+          blurRadius: 20,
+          offset: const Offset(0, 8),
+        ),
+      ],
+    );
+  }
+
+  BoxDecoration _getTextFieldDecoration(bool isReadOnly) {
+    return BoxDecoration(
+      color: const Color(0xFF0F0F11),
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(
+        color: isReadOnly
+            ? const Color(0xFF374151).withOpacity(0.3)
+            : const Color(0xFF4B5563),
+        width: 1,
+      ),
+    );
+  }
+
+  BoxDecoration _getUrgencyOptionDecoration(bool isSelected, Color color) {
+    return BoxDecoration(
+      color: isSelected
+          ? color.withOpacity(0.1)
+          : const Color(0xFF0F0F11),
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: isSelected
+            ? color
+            : const Color(0xFF374151),
+        width: isSelected ? 2 : 1,
+      ),
+    );
+  }
+
+  BoxDecoration _getSubmitButtonDecoration() {
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(16),
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color(0xFF8B5CF6),
+          Color(0xFF6366F1),
+        ],
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: const Color(0xFF6366F1).withOpacity(0.3),
+          blurRadius: 20,
+          offset: const Offset(0, 8),
+        ),
+      ],
+    );
+  }
+
+  TextStyle _getCardTitleStyle() {
+    return AppTextStyles.labelLarge.copyWith(
+      color: Colors.white,
+      fontWeight: FontWeight.w600,
+      fontSize: 16,
+    );
+  }
+
+  TextStyle _getTextFieldStyle(bool isReadOnly) {
+    return AppTextStyles.bodyMedium.copyWith(
+      color: isReadOnly
+          ? Colors.white.withOpacity(0.7)
+          : Colors.white,
+    );
+  }
+
+  TextStyle _getLabelStyle(bool isReadOnly) {
+    return AppTextStyles.labelMedium.copyWith(
+      color: isReadOnly
+          ? Colors.white.withOpacity(0.5)
+          : Colors.white.withOpacity(0.8),
+    );
+  }
+
+  TextStyle _getHintStyle() {
+    return AppTextStyles.bodyMedium.copyWith(
+      color: Colors.white.withOpacity(0.5),
+    );
+  }
+
+  TextStyle _getSelectorTitleStyle() {
+    return AppTextStyles.labelMedium.copyWith(
+      color: Colors.white.withOpacity(0.7),
+      fontSize: 12,
+    );
+  }
+
+  TextStyle _getSelectorValueStyle() {
+    return AppTextStyles.bodyMedium.copyWith(
+      color: Colors.white,
+      fontWeight: FontWeight.w600,
+      fontSize: 16,
+    );
+  }
+
+  TextStyle _getUrgencyTextStyle(bool isSelected, Color color) {
+    return AppTextStyles.labelMedium.copyWith(
+      color: isSelected
+          ? color
+          : Colors.white.withOpacity(0.7),
+      fontWeight: isSelected
+          ? FontWeight.w600
+          : FontWeight.normal,
+      fontSize: 14,
+    );
+  }
+
+  TextStyle _getUrgencyTextStyleFixed(bool isSelected, Color color) {
+    return AppTextStyles.labelMedium.copyWith(
+      color: isSelected ? color : Colors.white.withOpacity(0.7),
+      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+      fontSize: 14, // Fixed font size
+      height: 1.2,  // Fixed line height
+    );
+  }
+
+  TextStyle _getSubmitButtonTextStyle() {
+    return AppTextStyles.buttonText.copyWith(
+      fontWeight: FontWeight.w600,
+      fontSize: 16,
+      color: Colors.white,
+    );
+  }
+
+  Color _getIconColor(bool isReadOnly) {
+    return isReadOnly
+        ? Colors.white.withOpacity(0.5)
+        : Colors.white.withOpacity(0.8);
+  }
+
+  Color _getUrgencyIconColor(bool isSelected, Color color) {
+    return isSelected
+        ? color
+        : Colors.white.withOpacity(0.7);
+  }
+
+  ButtonStyle _getSubmitButtonStyle() {
+    return ElevatedButton.styleFrom(
+      backgroundColor: Colors.transparent,
+      foregroundColor: Colors.white,
+      shadowColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+    );
   }
 }

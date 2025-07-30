@@ -295,12 +295,13 @@ class CreateRideController extends GetxController {
 
   void handleVehicleSelection(String value) async {
     selectedVehicle.value = value;
-
+    int maxSeats = value == 'car' ? 7 : 1;
     if (value == 'car' || value == 'bike') {
       final seats = await UIUtils.showSeatSelectionBottomSheet(
         context: Get.context!,
         vehicleType: value,
         initialSeats: selectedSeats.value,
+        maxSeats: maxSeats,
       );
       if (seats != null) {
         selectedSeats.value = seats;

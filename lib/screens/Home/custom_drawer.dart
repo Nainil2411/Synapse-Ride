@@ -12,22 +12,18 @@ import 'package:synapseride/common/custom_color.dart';
 import 'package:synapseride/common/elevated_button.dart';
 import 'package:synapseride/controller/custom_drawer_controller.dart';
 import 'package:synapseride/controller/profile_controller.dart';
-import 'package:synapseride/controller/theme_controller.dart';
 
 class CustomDrawer extends StatelessWidget {
   CustomDrawer({super.key});
 
   final CustomDrawerController controller = Get.put(CustomDrawerController());
   final ProfileController profileController = Get.find<ProfileController>();
-  final ThemeController themeController =
-      Get.find<ThemeController>();
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color:
-            Theme.of(context).scaffoldBackgroundColor,
+        color: CustomColors.textPrimary,
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -57,13 +53,13 @@ class CustomDrawer extends StatelessWidget {
                                 : null,
                             child: imagePath == null
                                 ? Icon(Icons.person,
-                                    color: Theme.of(context).primaryColor,
+                                    color: CustomColors.textPrimary,
                                     size: 50)
                                 : null,
                           );
                         }),
                         decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor),
+                            color: CustomColors.textPrimary),
                       );
                     } else if (snapshot.hasError ||
                         !snapshot.hasData ||
@@ -88,13 +84,13 @@ class CustomDrawer extends StatelessWidget {
                                 : null,
                             child: imagePath == null
                                 ? Icon(Icons.person,
-                                    color: Theme.of(context).primaryColor,
+                                    color: CustomColors.textPrimary,
                                     size: 50)
                                 : null,
                           );
                         }),
                         decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor),
+                            color: CustomColors.textPrimary),
                       );
                     } else {
                       final userData = snapshot.data!.data()!;
@@ -122,34 +118,16 @@ class CustomDrawer extends StatelessWidget {
                                 : null,
                             child: imagePath == null
                                 ? Icon(Icons.person,
-                                    color: Theme.of(context).primaryColor,
+                                    color: CustomColors.textPrimary,
                                     size: 50)
                                 : null,
                           );
                         }),
                         decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor),
+                            color: CustomColors.textPrimary),
                       );
                     }
                   },
-                ),
-                // Theme toggle button positioned in top right
-                Positioned(
-                  top: 40,
-                  right: 16,
-                  child: Obx(() => IconButton(
-                        icon: Icon(
-                          themeController.isDarkMode.value
-                              ? Icons.wb_sunny // Sun icon for dark mode
-                              : Icons.nightlight_round,
-                          // Moon icon for light mode
-                          color: Colors.white,
-                          size: 28,
-                        ),
-                        onPressed: () {
-                          themeController.toggleTheme();
-                        },
-                      )),
                 ),
               ],
             ),
@@ -194,26 +172,21 @@ class CustomDrawer extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    backgroundColor: Theme.of(context).dialogBackgroundColor,
+                    backgroundColor: Colors.grey[900],
                     title: Text(
                       AppStrings.logout,
                       style: AppTextStyles.headline4Light,
                     ),
                     content: Text(
                       AppStrings.logoutmessage,
-                      style: AppTextStyles.bodyMedium.copyWith(
-                          color: Theme.of(context).textTheme.bodyMedium?.color),
+                      style: AppTextStyles.bodyMedium.copyWith(color: CustomColors.background),
                     ),
                     actions: [
                       TextButton(
                         onPressed: () => Get.back(),
                         child: Text(
                           AppStrings.cancel,
-                          style: AppTextStyles.bodyMedium.copyWith(
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.color),
+                          style: AppTextStyles.bodyMedium.copyWith(color: CustomColors.background),
                         ),
                       ),
                       TextButton(

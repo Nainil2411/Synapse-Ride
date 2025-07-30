@@ -183,7 +183,8 @@ class ViewRideRequestsController extends GetxController {
               ),
               child: Text('Accept Request'),
               onPressed: () {
-                Get.back();
+                Get.back(result: true);
+                Get.back(result: true);
                 acceptRideRequest(request);
               },
             ),

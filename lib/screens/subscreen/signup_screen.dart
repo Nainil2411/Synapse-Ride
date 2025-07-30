@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:synapseride/Routes/routes.dart';
 import 'package:synapseride/common/app_images.dart';
 import 'package:synapseride/common/app_string.dart';
@@ -150,21 +148,38 @@ class SignupScreen extends StatelessWidget {
                           },
                         )),
                     const SizedBox(height: 15),
-                    CustomTextFormField(
+                    Obx(() => CustomTextFormField(
                       controller: controller.dobController,
                       hintText: AppStrings.enterDOB,
                       showBorders: true,
                       borderColor: CustomColors.background,
-                      errorText: '',
-                      onChanged: (value) {},
+                      errorText: controller.dobError.value,
+                      onChanged: (value) {
+                        controller.dobError.value =
+                            controller.validateDOB(value)
+                                ? ''
+                                : 'Please select a valid date of birth (must be 18 or older)';
+                      },
                       obscureText: false,
                       readOnly: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          controller.dobError.value = 'Date of birth is required';
+                          return 'Date of birth is required';
+                        }
+                        if (!controller.validateDOB(value)) {
+                          controller.dobError.value = 'Please select a valid date of birth (must be 18 or older)';
+                          return controller.dobError.value;
+                        }
+                        controller.dobError.value = '';
+                        return null;
+                      },
                       onTap: () {
                         controller.selectDate(context);
                       },
                       suffixIcon: Icon(Icons.calendar_today,
                           color: CustomColors.background),
-                    ),
+                    )),
                     const SizedBox(height: 15),
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -232,101 +247,32 @@ class SignupScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    Obx(
-                      () => Stack(
-                        children: [
-                          IntlPhoneField(
-                            controller: controller.phoneController,
-                            validator: (phone) {
-                              if (phone == null || phone.number.isEmpty) {
-                                controller.phoneError.value =
-                                    'Phone number is required';
-                                return 'Phone number is required';
-                              }
-                              if (phone.number.length < 10) {
-                                controller.phoneError.value =
-                                    'Please enter a valid phone number';
-                                return 'Please enter a valid phone number';
-                              }
-                              controller.phoneError.value = '';
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                              hintText: AppStrings.phoneNumberrequire,
-                              hintStyle:
-                                  TextStyle(color: CustomColors.textSecondary),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide.none,
-                              ),
-                              filled: true,
-                              fillColor: Colors.transparent,
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: CustomColors.error,
-                                  width: 1.0,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: controller.phoneError.value.isNotEmpty
-                                      ? CustomColors.error
-                                      : CustomColors.background,
-                                  width: 1.0,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: controller.phoneError.value.isNotEmpty
-                                      ? CustomColors.error
-                                      : CustomColors.background,
-                                  width: 1.0,
-                                ),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: CustomColors.error,
-                                  width: 1.0,
-                                ),
-                              ),
-                            ),
-                            initialCountryCode: 'IN',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                            dropdownTextStyle: TextStyle(
-                              color: Colors.white,
-                            ),
-                            flagsButtonMargin: EdgeInsets.only(right: 12.0),
-                            onChanged: (phone) {
-                              if (phone.number.length < 10) {
-                                controller.phoneError.value =
-                                    'Please enter a valid phone number';
-                              } else {
-                                controller.phoneError.value = '';
-                              }
-                            },
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(15),
-                            ],
-                          ),
-                          Positioned(
-                            left: 100,
-                            top: 10,
-                            bottom: 30,
-                            child: Container(
-                              width: 1.5,
-                              color: CustomColors.background,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                                        Obx(() => CustomTextFormField(
+                          hintText: AppStrings.phoneNumberrequire,
+                          errorText: controller.phoneError.value,
+                          keyboardType: TextInputType.phone,
+                          textInputAction: TextInputAction.next,
+                          controller: controller.phoneController,
+                          borderColor: CustomColors.background,
+                          onChanged: (value) {
+                            controller.phoneError.value =
+                                controller.validatePhone(value)
+                                    ? ''
+                                    : controller.phoneError.value;
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              controller.phoneError.value =
+                                  'Phone number is required';
+                              return 'Phone number is required';
+                            }
+                            if (!controller.validatePhone(value)) {
+                              return controller.phoneError.value;
+                            }
+                            controller.phoneError.value = '';
+                            return null;
+                          },
+                        )),
                     const SizedBox(height: 15),
                     Obx(() => CustomTextFormField(
                           keyboardType: TextInputType.visiblePassword,
@@ -393,7 +339,7 @@ class SignupScreen extends StatelessWidget {
                       height: 55,
                       width: double.infinity,
                       child: TextButton.icon(
-                        onPressed: () {},
+                        onPressed: controller.isLoading.value ? null : controller.handleGoogleSignIn,
                         icon: Image.asset(AppImages.googleIcon, height: 24),
                         label: Text(
                           AppStrings.continueWithGoogle,

@@ -140,7 +140,8 @@ class MyRideRequestsController extends GetxController {
               ),
               child: Text('Delete'),
               onPressed: () {
-                Get.back();
+                Get.back(result: true);
+                Get.back(result: true);
                 deleteRequest(requestId);
               },
             ),

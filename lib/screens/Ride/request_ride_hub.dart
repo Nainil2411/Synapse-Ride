@@ -15,6 +15,7 @@ class RideRequestHubScreen extends StatefulWidget {
 
 class _RideRequestHubScreenState extends State<RideRequestHubScreen> {
   bool hasAcceptedRides = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -23,12 +24,23 @@ class _RideRequestHubScreenState extends State<RideRequestHubScreen> {
   }
 
   Future<void> _checkAcceptedRides() async {
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
+
     final hasRides = await AcceptedRidesController.hasAcceptedRides();
     if (mounted) {
       setState(() {
         hasAcceptedRides = hasRides;
+        isLoading = false;
       });
     }
+  }
+
+  Future<void> _refreshAcceptedRides() async {
+    await _checkAcceptedRides();
   }
 
   @override
@@ -45,7 +57,7 @@ class _RideRequestHubScreenState extends State<RideRequestHubScreen> {
             CommonWidgets.buildScreenHeader(
               title: 'Ride Request System',
               subtitle:
-                  'Request rides or help others by accepting their requests',
+              'Request rides or help others by accepting their requests',
               icon: Icons.directions_car,
             ),
             const SizedBox(height: 30),
@@ -56,13 +68,13 @@ class _RideRequestHubScreenState extends State<RideRequestHubScreen> {
                     CommonWidgets.buildActionCard(
                       title: 'Request a Ride',
                       subtitle:
-                          'Need a ride? Create a request for others to see',
+                      'Need a ride? Create a request for others to see',
                       icon: Icons.add_circle_outline,
                       color: CustomColors.green1,
                       onTap: () async {
                         final result = await Get.toNamed(AppRoutes.requestRide);
                         if (result == true) {
-                          _checkAcceptedRides();
+                          await _refreshAcceptedRides();
                         }
                       },
                     ),
@@ -72,7 +84,12 @@ class _RideRequestHubScreenState extends State<RideRequestHubScreen> {
                       subtitle: 'View and manage your ride requests',
                       icon: Icons.list_alt,
                       color: CustomColors.blue1,
-                      onTap: () => Get.toNamed(AppRoutes.myRideRequests),
+                      onTap: () async {
+                        final result = await Get.toNamed(AppRoutes.myRideRequests);
+                        if (result == true) {
+                          await _refreshAcceptedRides();
+                        }
+                      },
                     ),
                     const SizedBox(height: 16),
                     CommonWidgets.buildActionCard(
@@ -82,9 +99,9 @@ class _RideRequestHubScreenState extends State<RideRequestHubScreen> {
                       color: Colors.orange,
                       onTap: () async {
                         final result =
-                            await Get.toNamed(AppRoutes.viewRideRequests);
+                        await Get.toNamed(AppRoutes.viewRideRequests);
                         if (result == true) {
-                          _checkAcceptedRides();
+                          await _refreshAcceptedRides();
                         }
                       },
                     ),
@@ -97,9 +114,9 @@ class _RideRequestHubScreenState extends State<RideRequestHubScreen> {
                         color: Colors.purple,
                         onTap: () async {
                           final result =
-                              await Get.toNamed(AppRoutes.acceptedRides);
+                          await Get.toNamed(AppRoutes.acceptedRides);
                           if (result == true) {
-                            _checkAcceptedRides();
+                            await _refreshAcceptedRides();
                           }
                         },
                         showBadge: true,
@@ -107,6 +124,12 @@ class _RideRequestHubScreenState extends State<RideRequestHubScreen> {
                       ),
                     ],
                     const SizedBox(height: 20),
+                    // Optional: Add a refresh indicator or loading state
+                    if (isLoading)
+                      const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
+                      ),
                   ],
                 ),
               ),

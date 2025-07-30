@@ -43,7 +43,8 @@ class UIUtils {
               width: 1,
             ),
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
+              begin
+                  : Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: gradientColors ??
                   [
@@ -315,8 +316,12 @@ class UIUtils {
               ),
               child: Container(
                 padding: const EdgeInsets.all(20),
-                height: 220,
+                constraints: const BoxConstraints(
+                  minHeight: 200,
+                  maxHeight: 300,
+                ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
@@ -328,14 +333,24 @@ class UIUtils {
                       child: Icon(
                         Icons.check,
                         color: CustomColors.green1,
-                        size: 60,
+                        size: 50,
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    Text(title, style: AppTextStyles.labelLarge),
-                    const SizedBox(height: 5),
-                    Text(message, style: AppTextStyles.bodySmall),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 16),
+                    Text(
+                      title,
+                      style: AppTextStyles.labelLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Flexible(
+                      child: Text(
+                        message,
+                        style: AppTextStyles.bodySmall,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     Text(
                       '${AppStrings.closingIn} $countdown...',
                       style: AppTextStyles.successText.copyWith(fontSize: 10),
@@ -354,7 +369,7 @@ class UIUtils {
     required BuildContext context,
     required String vehicleType,
     required int initialSeats,
-    int maxSeats = 8,
+    required int maxSeats,
   }) async {
     int tempSelectedSeats = initialSeats;
     int? result;
@@ -363,10 +378,18 @@ class UIUtils {
       context: context,
       isDismissible: false,
       enableDrag: false,
+      backgroundColor: Colors.transparent,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Container(
+              decoration: const BoxDecoration(
+                color: CustomColors.background,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                ),
+              ),
               padding: const EdgeInsets.all(16),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -377,11 +400,10 @@ class UIUtils {
                     children: [
                       Text(
                         AppStrings.selectSeats,
-                        style: AppTextStyles.headline4,
+                        style: AppTextStyles.headline4.copyWith(color: CustomColors.textPrimary),
                       ),
                       IconButton(
-                        icon:
-                            Icon(Icons.close, color: CustomColors.textPrimary),
+                        icon: Icon(Icons.close, color: CustomColors.textPrimary),
                         onPressed: () => Get.back(),
                       ),
                     ],
@@ -391,17 +413,32 @@ class UIUtils {
                     spacing: 8,
                     children: List.generate(maxSeats, (index) {
                       final seatNumber = index + 1;
-                      return ChoiceChip(
-                        label: Text('$seatNumber'),
-                        selected: tempSelectedSeats == seatNumber,
-                        selectedColor: CustomColors.yellow1,
-                        onSelected: (selected) {
-                          if (selected) {
-                            setModalState(() {
-                              tempSelectedSeats = seatNumber;
-                            });
-                          }
+                      final isSelected = tempSelectedSeats == seatNumber;
+                      return GestureDetector(
+                        onTap: () {
+                          setModalState(() {
+                            tempSelectedSeats = seatNumber;
+                          });
                         },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          margin: const EdgeInsets.only(bottom: 8),
+                          decoration: BoxDecoration(
+                            color: isSelected ? CustomColors.yellow1 : CustomColors.background,
+                            border: Border.all(
+                              color: CustomColors.textPrimary,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            '$seatNumber',
+                            style: TextStyle(
+                              color: CustomColors.textPrimary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       );
                     }),
                   ),
@@ -480,14 +517,21 @@ class UIUtils {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(title),
-          content: Text(message),
+          backgroundColor: Colors.grey[900],
+          title: Text(
+            title,
+            style: AppTextStyles.headline4Light,
+          ),
+          content: Text(
+            message,
+            style: AppTextStyles.bodyMedium.copyWith(color: CustomColors.background),
+          ),
           actions: [
             TextButton(
               onPressed: () => Get.back(),
               child: Text(
                 AppStrings.ok,
-                style: TextStyle(color: CustomColors.error),
+                style: AppTextStyles.bodyMedium.copyWith(color: CustomColors.error),
               ),
             ),
           ],
@@ -506,7 +550,26 @@ class UIUtils {
       builder: (BuildContext context, Widget? child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
-          child: child!,
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              dialogBackgroundColor: CustomColors.background,
+              colorScheme: ColorScheme.light(
+                primary: CustomColors.yellow1,
+                onPrimary: CustomColors.textPrimary,
+                surface: CustomColors.background,
+                onSurface: CustomColors.textPrimary,
+                onSecondary: CustomColors.textPrimary,
+              ),
+              textTheme: Theme.of(context).textTheme.copyWith(
+                bodyLarge: TextStyle(color: CustomColors.textPrimary),
+                bodyMedium: TextStyle(color: CustomColors.textPrimary),
+                labelLarge: TextStyle(color: CustomColors.textPrimary),
+                labelMedium: TextStyle(color: CustomColors.textPrimary),
+                labelSmall: TextStyle(color: CustomColors.textPrimary),
+              ),
+            ),
+            child: child!,
+          ),
         );
       },
     );
@@ -534,35 +597,50 @@ class UIUtils {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(title),
+          backgroundColor: Colors.grey[900],
+          title: Text(
+            title,
+            style: AppTextStyles.headline4Light,
+          ),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(message),
+                Text(
+                  message,
+                  style: AppTextStyles.bodyMedium.copyWith(color: CustomColors.background),
+                ),
                 if (additionalMessage != null) ...[
                   const SizedBox(height: 8),
-                  Text(additionalMessage),
+                  Text(
+                    additionalMessage,
+                    style: AppTextStyles.bodyMedium.copyWith(color: CustomColors.background),
+                  ),
                 ],
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: cancelColor ?? CustomColors.textSecondary,
+              child: Text(
+                cancelText,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: cancelColor ?? CustomColors.background,
+                ),
               ),
-              child: Text(cancelText),
               onPressed: () => Get.back(result: false),
             ),
             TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: confirmColor ?? CustomColors.error,
+              child: Text(
+                confirmText,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: confirmColor ?? CustomColors.error,
+                ),
               ),
-              child: Text(confirmText),
               onPressed: () => Get.back(result: true),
             ),
           ],
         );
+
       },
     );
     return result ?? false;

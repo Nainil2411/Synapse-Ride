@@ -181,13 +181,15 @@ class EditRideScreen extends StatelessWidget {
                         )),
                     const SizedBox(height: 32),
                     Obx(() => CustomElevatedButton(
-                          label: AppStrings.save,
-                          isLoading: controller.isLoading.value,
-                          fullWidth: true,
-                          onPressed: () => controller.canSaveChanges
-                              ? () => controller.saveChanges()
-                              : null,
-                        )),
+                      label: AppStrings.save,
+                      isLoading: controller.isLoading.value,
+                      fullWidth: true,
+                      onPressed: () {
+                        if (controller.canSaveChanges) {
+                          controller.saveChanges();
+                        }
+                      },
+                    )),
                   ],
                 ),
               );

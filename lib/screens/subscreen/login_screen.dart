@@ -107,18 +107,6 @@ class LoginScreen extends StatelessWidget {
                           return null;
                         },
                       )),
-                  const SizedBox(height: 16),
-                  Obx(() => controller.message.value.isNotEmpty
-                      ? Column(
-                          children: [
-                            const SizedBox(height: 10),
-                            Text(
-                              controller.message.value,
-                              style: AppTextStyles.errorText,
-                            ),
-                          ],
-                        )
-                      : const SizedBox.shrink()),
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -159,7 +147,7 @@ class LoginScreen extends StatelessWidget {
                     height: 55,
                     width: double.infinity,
                     child: TextButton.icon(
-                      onPressed: () {},
+                      onPressed: controller.isLoading.value ? null : controller.handleGoogleSignIn,
                       icon: Image.asset(AppImages.googleIcon, height: 24),
                       label: Text(
                         AppStrings.continueWithGoogle,
