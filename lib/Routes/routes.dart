@@ -11,9 +11,6 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String page = '/page';
   static const String complain = '/complain';
-  static const String aboutus = '/aboutus';
-  static const String privacy = '/privacy';
-  static const String helpandsupport = '/helpandsupport';
   static const String contactus = '/contactus';
   static const String customDrawer = '/customDrawer';
   static const String joinedRide = '/joinedRide';
@@ -25,4 +22,5 @@ class AppRoutes {
   static const String viewRideRequests = '/viewRideRequests';
   static const String myRideRequests = '/myRideRequests';
   static const String acceptedRides = '/acceptedRides';
+  static const String modernInfoHub = '/modernInfoHub';
 }

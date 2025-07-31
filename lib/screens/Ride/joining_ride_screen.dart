@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -62,7 +60,6 @@ class JoiningRideScreen extends StatelessWidget {
                         final ride = controller.rides[index];
                         var isExpanded =
                             controller.expandedItems.contains(index);
-                        log("isEx value = $isExpanded");
                         final isActive = ride['status'] == 'active';
                         final createdAt = ride['createdAt'] as Timestamp;
                         final formattedDate = DateFormat('MMM dd, yyyy hh:mm a')
@@ -70,7 +67,6 @@ class JoiningRideScreen extends StatelessWidget {
                         final bool hasJoined = ride['hasJoined'] == true ||
                             controller.joinedRides.contains(ride['rideId']);
                         final availableSeats = ride['seats'] as int;
-
                         return Card(
                           color: CustomColors.background,
                           margin: const EdgeInsets.only(bottom: 16),
@@ -323,6 +319,7 @@ class JoiningRideScreen extends StatelessWidget {
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(8),
+
                                                 ),
                                               ),
                                               onPressed: () {
@@ -355,7 +352,7 @@ class JoiningRideScreen extends StatelessWidget {
                           ),
                         );
                       },
-                    ),
+          ),
         );
       },
     );

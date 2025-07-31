@@ -144,29 +144,19 @@ class CustomDrawer extends StatelessWidget {
             _buildListTile(context, Icons.warning, AppStrings.complain, () {
               Get.toNamed(AppRoutes.complain);
             }),
-            _buildListTile(context, Icons.info, AppStrings.aboutus, () {
-              Get.toNamed(AppRoutes.aboutus);
-            }),
-            _buildListTile(
-                context, Icons.privacy_tip_outlined, AppStrings.privacy, () {
-              Get.toNamed(AppRoutes.privacy);
-            }),
-            _buildListTile(
-                context, Icons.live_help_outlined, AppStrings.helpandsupport,
-                () {
-              Get.toNamed(AppRoutes.helpandsupport);
-            }),
             _buildListTile(context, Icons.support_agent, AppStrings.contactus,
                 () {
               Get.toNamed(AppRoutes.contactus);
             }),
+            _buildListTile(context, Icons.info, "Information Hub", () {
+              Get.toNamed(AppRoutes.modernInfoHub);
+            }),
             ListTile(
               leading:
-                  Icon(Icons.logout, color: Theme.of(context).iconTheme.color),
+                  Icon(Icons.logout, color: CustomColors.background),
               title: Text(
                 AppStrings.logout,
-                style: AppTextStyles.bodyMedium.copyWith(
-                    color: Theme.of(context).textTheme.bodyMedium?.color),
+                style: AppTextStyles.bodyMediumwhite,
               ),
               onTap: () {
                 showDialog(
@@ -209,7 +199,7 @@ class CustomDrawer extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 180),
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -232,12 +222,10 @@ class CustomDrawer extends StatelessWidget {
   Widget _buildListTile(
       BuildContext context, IconData icon, String title, VoidCallback onTap) {
     return ListTile(
-      leading: Icon(icon, color: Theme.of(context).iconTheme.color),
+      leading: Icon(icon, color: CustomColors.background),
       title: Text(
         title,
-        style: AppTextStyles.bodyMedium.copyWith(
-          color: Theme.of(context).textTheme.bodyMedium?.color,
-        ),
+        style: AppTextStyles.bodyMediumwhite
       ),
       onTap: onTap,
     );

@@ -10,7 +10,6 @@ import 'package:synapseride/controller/contact_us_controller.dart';
 class ContactUsForm extends StatelessWidget {
   const ContactUsForm({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     final ContactUsController controller = Get.find<ContactUsController>();
@@ -65,20 +64,19 @@ class ContactUsForm extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          // Phone Field using common component
           Obx(() => CommonFormField(
-            controller: controller.phoneController,
-            label: 'Phone Number',
-            hint: 'Enter your phone number',
-            icon: Icons.phone_outlined,
-            keyboardType: TextInputType.phone,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(10),
-            ],
-            errorObs: RxBool(controller.phoneError.value.isNotEmpty),
-            errorText: controller.phoneError.value,
-          )),
+                controller: controller.phoneController,
+                label: 'Phone Number',
+                hint: 'Enter your phone number',
+                icon: Icons.phone_outlined,
+                keyboardType: TextInputType.phone,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(10),
+                ],
+                errorObs: RxBool(controller.phoneError.value.isNotEmpty),
+                errorText: controller.phoneError.value,
+              )),
           const SizedBox(height: 20),
 
           // Message Field using common component

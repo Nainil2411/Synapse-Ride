@@ -1,11 +1,9 @@
 import 'package:get/get.dart';
 import 'package:synapseride/Routes/routes.dart';
 import 'package:synapseride/screens/Home/Drawer/Joined_ride.dart';
-import 'package:synapseride/screens/Home/Drawer/aboutus.dart';
 import 'package:synapseride/screens/Home/Drawer/complain/complain.dart';
 import 'package:synapseride/screens/Home/Drawer/contactUs/contact_us_screen.dart';
-import 'package:synapseride/screens/Home/Drawer/help&support.dart';
-import 'package:synapseride/screens/Home/Drawer/privacy.dart';
+import 'package:synapseride/screens/Home/Drawer/modernInfoHub.dart';
 import 'package:synapseride/screens/Home/Drawer/profile/profile.dart';
 import 'package:synapseride/screens/Home/custom_drawer.dart';
 import 'package:synapseride/screens/Home/homescreen.dart';
@@ -41,11 +39,9 @@ class AppPages {
     GetPage(name: AppRoutes.profile, page: () => ProfileScreen()),
     GetPage(name: AppRoutes.page, page: () => PageScreen()),
     GetPage(name: AppRoutes.complain, page: () => ComplainScreen()),
-    GetPage(name: AppRoutes.aboutus, page: () => AboutUsScreen()),
-    GetPage(name: AppRoutes.privacy, page: () => PrivacyPolicyScreen()),
-    GetPage(name: AppRoutes.helpandsupport, page: () => HelpAndSupportScreen()),
     GetPage(name: AppRoutes.contactus, page: () => ContactUsScreen()),
     GetPage(name: AppRoutes.customDrawer, page: () => CustomDrawer()),
+    GetPage(name: AppRoutes.modernInfoHub, page: () => ModernInfoHubScreen()),
     GetPage(name: AppRoutes.joinedRide, page: () => JoinedRideScreen()),
     GetPage(
         name: AppRoutes.notificationScreen, page: () => NotificationScreen()),
